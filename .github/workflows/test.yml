@@ -15,12 +15,13 @@ jobs:
         uses: actions/checkout@v3
 
 
-      - name: Pull Docker image and run
+      - name: Pull Docker image
         run: |
           docker login -u djamal1502 -p ${{ secrets.DOCKERHUB_TOKEN }}
           docker pull djamal1502/ci_cd_assignment:latest
+      - name: Run Test
           docker run --name model_test djamal1502/ci_cd_assignment:latest
-          # Add command to check output score here, modify accordingly
+          # Add command to check output score here
           # Assuming test.py outputs score in a parseable way
           OUTPUT=$(docker logs model_test)
           echo "Score: $OUTPUT"
