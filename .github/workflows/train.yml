@@ -27,4 +27,4 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          tags: yourusername/yourrepo:latest
+          tags: djamal1502/ci_cd_assignment:latest
