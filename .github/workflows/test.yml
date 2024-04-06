@@ -1,13 +1,16 @@
+
 name: Test
 
 on:
   pull_request:
     branches: 
       - main
+
 jobs:
   Train:
     uses: ./.github/workflows/train.yml
     secrets: inherit
+
   pull_and_test:
     name: pull_and_test
     needs: [Train]
@@ -15,14 +18,12 @@ jobs:
     steps:
       - name: Pull Docker Image
         run: docker pull djamal1502/ci_cd_assignment:latest
-      
+
       - name: Run Tests
         run: |
           OUTPUT=$(docker run --rm djamal1502/ci_cd_assignment:latest)
           echo "Score:"
           echo "$OUTPUT"
-          if [[ `echo "$OUTPUT 0.35" | awk '{print ($1 < $2)}'` == 1 ]]; then 
+          if [[ `echo "$OUTPUT 0.50" | awk '{print ($1 < $2)}'` == 1 ]]; then 
             echo "Insufficient Accuracy" && exit 1
           fi
-
-
