@@ -1,31 +1,28 @@
 name: Test
 
 on:
-  workflow_run:
-    workflows: ["Train"]
-    types:
-      - completed
-
+  pull_request:
+    branches: 
+      - main
 jobs:
-  test:
+  Train:
+    uses: ./.github/workflows/train.yml
+    secrets: inherit
+  pull_and_test:
+    name: pull_and_test
+    needs: [Train]
     runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-
-      - name: Pull Docker image
+      - name: Pull Docker Image
+        run: docker pull djamal1502/ci_cd_assignment:latest
+      
+      - name: Run Tests
         run: |
-          docker login -u djamal1502 -p ${{ secrets.DOCKERHUB_TOKEN }}
-          docker pull djamal1502/ci_cd_assignment:latest
-      - name: Run Test
-          docker run --name model_test djamal1502/ci_cd_assignment:latest
-          # Add command to check output score here
-          # Assuming test.py outputs score in a parseable way
-          OUTPUT=$(docker logs model_test)
-          echo "Score: $OUTPUT"
-          if [[ "$OUTPUT" < "0.35" ]]; then
-            echo "Insufficient Accuracy"
-            exit 1
+          OUTPUT=$(docker run --rm djamal1502/ci_cd_assignment:latest)
+          echo "Score:"
+          echo "$OUTPUT"
+          if [[ `echo "$OUTPUT 0.35" | awk '{print ($1 < $2)}'` == 1 ]]; then 
+            echo "Insufficient Accuracy" && exit 1
           fi
+
+
