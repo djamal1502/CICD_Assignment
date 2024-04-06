@@ -24,6 +24,7 @@ jobs:
           OUTPUT=$(docker run --rm djamal1502/ci_cd_assignment:latest)
           echo "Score:"
           echo "$OUTPUT"
-          if [[ `echo "$OUTPUT 0.35" | awk '{print ($1 < $2)}'` == 1 ]]; then 
+          if [[ `echo "$OUTPUT 0.50" | awk '{print ($1 < $2)}'` == 1 ]]; then 
             echo "Insufficient Accuracy" && exit 1
           fi
+git add 
